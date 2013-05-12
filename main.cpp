@@ -11,7 +11,6 @@
 #include <GL/glew.h>
 #include <GLUT/glut.h>
 #include "Scene.h"
-#include "DiffusePerPixelNode.h"
 #include "TextureNode.h"
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
@@ -25,20 +24,12 @@ void setupScene();
 unsigned FrameCount = 0;
 
 int CurrentWidth = 800,
-CurrentHeight = 600,
-WindowHandle = 0, mouseX = 0, mouseY = 0;
+CurrentHeight = 600;
 
-SceneNode* pad1;
-SceneNode* pad2;
 Light* light;
-
 Camera *camera;
-
 Scene* scene;
 
-float directionX = 1;
-float directionY = 0.5;
-float speed = 0.001;
 
 static void Draw(void)
 {
@@ -48,37 +39,6 @@ static void Draw(void)
     scene->draw();
     
     glutSwapBuffers();
-}
-
-GLboolean wire = false;
-
-static void Key(unsigned char key, int x, int y)
-{
-    printf("%d", key);
-    switch (key) {
-		case 27: // ESC
-			exit(0);
-            break;
-        case 'q': 
-			pad1->rotate(5.f, 0, 1.0f, 0);
-            break;
-        case 'e': 
-			pad1->rotate(-5.f, 0, 1.0f, 0);
-            break;
-        case 'a':
-            light->translate(-100, 0, 0);
-            break;
-        case 'd':
-            light->translate(100, 0, 0);
-            break;
-        case 'w': 
-            if( !wire )
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            else
-               glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
-                wire=!wire;
-            break;
-	}
 }
 
 void ResizeFunction(int Width, int Height)
@@ -118,10 +78,6 @@ void IdleFunction(void)
 
 void setupScene(){
     scene = new Scene();
-    
-    pad1 = new DiffusePerPixelNode("cube.obj");
-    
-    scene->addNode(pad1);
     
     camera = new Camera();
     
@@ -180,7 +136,6 @@ int main (int argc, char ** argv)
     timerCallback(0);
     glutReshapeFunc(ResizeFunction);
     glutDisplayFunc(Draw);
-    glutKeyboardFunc(Key);
     glutIdleFunc(IdleFunction);
     glutMainLoop();
     
