@@ -29,7 +29,7 @@ CurrentHeight = 600;
 Light* light;
 Camera *camera;
 Scene* scene;
-
+TextureNode *temp;
 
 static void Draw(void)
 {
@@ -39,6 +39,18 @@ static void Draw(void)
     scene->draw();
     
     glutSwapBuffers();
+}
+
+static void Key(unsigned char key, int x, int y)
+{
+    switch (key) {
+		case 32:
+			if (temp->rampIsOn  > 0.5)
+				temp->rampIsOn = 0.0;
+			else if (temp->rampIsOn < 0.5)
+				temp->rampIsOn = 1.0;
+            break;
+	}
 }
 
 void ResizeFunction(int Width, int Height)
@@ -85,12 +97,8 @@ void setupScene(){
 
     scene->setCamera(camera);
     
-    scene->addEffect(new TextureNode(&CurrentWidth,&CurrentHeight));
+    scene->addEffect( temp = new TextureNode(&CurrentWidth,&CurrentHeight));
     
-    light = new Light();
-    light->translate(0, 300.f, 400.f);
-    
-    scene->addLight(light);
 }
 
 int main (int argc, char ** argv)
@@ -136,6 +144,14 @@ int main (int argc, char ** argv)
     timerCallback(0);
     glutReshapeFunc(ResizeFunction);
     glutDisplayFunc(Draw);
+	glutKeyboardFunc(Key);
+
+	printf("\nBilgisayar Proje II - Real-Time Computer Graphics\n");
+	printf("Project #IV\n\n");
+	printf("Commands:\n");
+	printf("---------\n");
+	printf("	Space:    On/Off the ramp texture.\n");
+
     glutIdleFunc(IdleFunction);
     glutMainLoop();
     

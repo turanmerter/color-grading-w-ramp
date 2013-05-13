@@ -5,7 +5,12 @@
 
 class TextureNode: public Effect{
 public:
+	
+	float rampIsOn;
+
     TextureNode(int* screen_width, int* screen_height):Effect("texture_node.frag",screen_width, screen_height){
+
+		rampIsOn = 1.0;
 
 		texture1 = glGetUniformLocation(programID, "texture1");
         if (texture1 == -1) {
@@ -17,9 +22,15 @@ public:
             fprintf(stderr, "Could not bind attribute %s\n", "texture2");
         }
 
+		rampOn = glGetUniformLocation(programID, "rampOn");
+        if (rampOn == -1) {
+            fprintf(stderr, "Could not bind attribute %s\n", "rampOn");
+        }
     }
     virtual void draw(){
         glUseProgram(programID);
+		
+		glUniform1f(rampOn, rampIsOn);
 
 		glActiveTexture(GL_TEXTURE1);
 		LoadGLTexture("fb.jpg", 640, 640);
@@ -34,7 +45,7 @@ public:
         Effect::draw();
     }
 private:
-    GLuint texture1, texture2;
+    GLuint texture1, texture2, rampOn;
 
 	GLint LoadGLTexture(const char *filename, int width, int height) {
 		GLuint _texture;
