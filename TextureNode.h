@@ -5,12 +5,19 @@
 
 class TextureNode: public Effect{
 public:
-	
+
 	float rampIsOn;
+	float xCoordinate, yCoordinate;
+	float screenProportionHorizontal;
+	float screenProportionVertical;
 
     TextureNode(int* screen_width, int* screen_height):Effect("texture_node.frag",screen_width, screen_height){
 
 		rampIsOn = 1.0;
+		xCoordinate = 400.0;
+		yCoordinate = 300.0;
+		screenProportionHorizontal = 0.5;
+		screenProportionVertical = 0.5;
 
 		texture1 = glGetUniformLocation(programID, "texture1");
         if (texture1 == -1) {
@@ -26,11 +33,36 @@ public:
         if (rampOn == -1) {
             fprintf(stderr, "Could not bind attribute %s\n", "rampOn");
         }
+
+		xCoord = glGetUniformLocation(programID, "xCoord");
+        if (xCoord == -1) {
+            fprintf(stderr, "Could not bind attribute %s\n", "xCoord");
+        }
+
+		yCoord = glGetUniformLocation(programID, "yCoord");
+        if (yCoord == -1) {
+            fprintf(stderr, "Could not bind attribute %s\n", "yCoord");
+        }
+
+		screenPropHorizontal = glGetUniformLocation(programID, "screenPropHorizontal");
+        if (screenPropHorizontal == -1) {
+            fprintf(stderr, "Could not bind attribute %s\n", "screenPropHorizontal");
+        }
+
+		screenPropVertical = glGetUniformLocation(programID, "screenPropVertical");
+        if (screenPropVertical == -1) {
+            fprintf(stderr, "Could not bind attribute %s\n", "screenPropVertical");
+        }
+
     }
     virtual void draw(){
         glUseProgram(programID);
-		
+
 		glUniform1f(rampOn, rampIsOn);
+		glUniform1f(xCoord, xCoordinate);
+		glUniform1f(yCoord, yCoordinate);
+		glUniform1f(screenPropHorizontal, screenProportionHorizontal);
+		glUniform1f(screenPropVertical, screenProportionVertical);
 
 		glActiveTexture(GL_TEXTURE1);
 		LoadGLTexture("fb.jpg", 640, 640);
@@ -45,7 +77,8 @@ public:
         Effect::draw();
     }
 private:
-    GLuint texture1, texture2, rampOn;
+    GLuint texture1, texture2, rampOn, 
+		xCoord, yCoord, screenPropHorizontal,screenPropVertical;
 
 	GLint LoadGLTexture(const char *filename, int width, int height) {
 		GLuint _texture;
@@ -70,7 +103,7 @@ private:
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	
+
     
 		return _texture;
 	}

@@ -44,13 +44,54 @@ static void Draw(void)
 static void Key(unsigned char key, int x, int y)
 {
     switch (key) {
-		case 32:
+		case 32: // Space
 			if (temp->rampIsOn  > 0.5)
 				temp->rampIsOn = 0.0;
 			else if (temp->rampIsOn < 0.5)
 				temp->rampIsOn = 1.0;
             break;
+		case 27: // ESC
+			exit(0);
+            break;
 	}
+}
+
+void SpecialKey(int key, int x, int y) {
+
+	switch (key) {
+		case GLUT_KEY_LEFT:
+			if (temp->screenProportionHorizontal > 0.0){
+				temp->screenProportionHorizontal -= 0.05;
+				printf("Proportion is decreased horizantally.\n");
+			}
+			break;
+		case GLUT_KEY_RIGHT:
+			if (temp->screenProportionHorizontal < 0.5){
+				temp->screenProportionHorizontal += 0.05;
+				printf("Proportion is increased horizantally.\n");
+			}
+			break;
+		case GLUT_KEY_DOWN:
+			if (temp->screenProportionVertical > 0.0){
+				temp->screenProportionVertical -= 0.05;
+				printf("Proportion is decreased vertically.\n");
+			}
+			break;
+		case GLUT_KEY_UP:
+			if (temp->screenProportionVertical < 0.5){
+				temp->screenProportionVertical += 0.05;
+				printf("Proportion is increased vertically.\n");
+			}
+			break;
+	}
+}
+
+static void Mouse(int x, int y)
+{
+	temp->xCoordinate = float(x);
+	temp->yCoordinate = 600.0 - float(y);
+
+    glutPostRedisplay();
 }
 
 void ResizeFunction(int Width, int Height)
@@ -90,11 +131,9 @@ void IdleFunction(void)
 
 void setupScene(){
     scene = new Scene();
-    
     camera = new Camera();
     
     camera->translate(0.f, 0.f, 20.f);
-
     scene->setCamera(camera);
     
     scene->addEffect( temp = new TextureNode(&CurrentWidth,&CurrentHeight));
@@ -145,17 +184,20 @@ int main (int argc, char ** argv)
     glutReshapeFunc(ResizeFunction);
     glutDisplayFunc(Draw);
 	glutKeyboardFunc(Key);
+	glutSpecialFunc(SpecialKey);
+    glutIdleFunc(IdleFunction);
+    glutPassiveMotionFunc(Mouse);
 
 	printf("\nBilgisayar Proje II - Real-Time Computer Graphics\n");
 	printf("Project #IV\n\n");
 	printf("Commands:\n");
 	printf("---------\n");
-	printf("	Space:    On/Off the ramp texture.\n");
+	printf("	Space:      On/Off the ramp texture.\n");
+	printf("	Arrow keys: Resize ramp texture area.\n");
+	printf("	Mouse:      Move ramp texture area.\n");
+	printf("	ESC:        Exit the application.\n");
 
-    glutIdleFunc(IdleFunction);
     glutMainLoop();
     
     return 0;
 }
-
-
